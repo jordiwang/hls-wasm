@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TS 类型检测</title>
+</head>
+
+<body>
+    <input id="js_input_file" type="file">
+
+    <script src="../wasm/tsdemuxer.js"></script>
+
+   
+    <script>
+        let inputFile = document.querySelector('#js_input_file')
+
+        function syncOffset(data) {
+            // scan 1000 first bytes
+            const scanwindow = Math.min(1000, data.length - 3 * 188);
+            let i = 0;
+            while (i < scanwindow) {
+                // a TS fragment should contain at least 3 TS packets, a PAT, a PMT, and one PID, each starting with 0x47
+                if (
+                    data[i] === 0x47 &&
+                    data[i + 188] === 0x47 &&
+                    data[i + 2 * 188] === 0x47
+                ) {
+                    return i;
+                } else {
+                    i++;
+                }
+            }
+            return -1;
+        }
+
+        inputFile.addEventListener('change', () => {
+            const file = inputFile.files[0];
+
+            const fileReader = new FileReader()
+            fileReader.addEventListener('load', () => {
+                const fileBuffer = new Uint8Array(fileReader.result)
+
+                console.log(fileBuffer, syncOffset(fileBuffer));
+            })
+
+            fileReader.readAsArrayBuffer(file)
+        })
+
+
+
+    </script>
+</body>
+
+</html>

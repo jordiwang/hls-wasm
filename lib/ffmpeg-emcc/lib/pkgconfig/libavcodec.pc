@@ -1,0 +1,14 @@
+prefix=/media/ninja/Data/hls-wasm/lib/ffmpeg-3.4.8
+exec_prefix=${prefix}
+libdir=/media/ninja/Data/hls-wasm/lib/ffmpeg-3.4.8/lib
+includedir=/media/ninja/Data/hls-wasm/lib/ffmpeg-3.4.8/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 57.107.100
+Requires: libswresample >= 2.9.100, libavutil >= 55.78.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavcodec -lm -ldl -pthread -pthread
+Libs.private: 
+Cflags: -I${includedir}
