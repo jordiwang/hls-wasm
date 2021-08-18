@@ -1,8 +1,19 @@
 #include <libavformat/avformat.h>
 #include <libavutil/timestamp.h>
 
+struct buffer_data {
+  uint8_t *buf;
+  int size;
+  uint8_t *ptr;
+  size_t room;  ///< size left in the buffer
+};
+
+struct buffer_data bd = {0};
+const size_t bd_buf_size = 1024;
+
 int main(int argc, char const *argv[]) {
   av_register_all();
+  av_log_set_level(AV_LOG_DEBUG);
   return 0;
 }
 
@@ -20,19 +31,51 @@ static void log_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt,
       pkt->stream_index);
 }
 
-// Write File
-int write_buffer(void *opaque, uint8_t *buf, int buf_size) {
-  // if (!feof(fp_write)) {
-  //   int true_size = fwrite(buf, 1, buf_size, fp_write);
-  //   return true_size;
-  // } else {
-  //   return -1;
-  // }
-  return 0;
+static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
+  struct buffer_data *bd = (struct buffer_data *)opaque;
+  while (buf_size > bd->room) {
+    int64_t offset = bd->ptr - bd->buf;
+    bd->buf = av_realloc_f(bd->buf, 2, bd->size);
+    if (!bd->buf) return AVERROR(ENOMEM);
+    bd->size *= 2;
+    bd->ptr = bd->buf + offset;
+    bd->room = bd->size - offset;
+  }
+
+  memcpy(bd->ptr, buf, buf_size);
+  bd->ptr += buf_size;
+  bd->room -= buf_size;
+
+  return buf_size;
+}
+
+static int64_t seek(void *opaque, int64_t offset, int whence) {
+  struct buffer_data *bd = (struct buffer_data *)opaque;
+  switch (whence) {
+    case SEEK_SET:
+      bd->ptr = bd->buf + offset;
+      return bd->ptr;
+      break;
+    case SEEK_CUR:
+      bd->ptr += offset;
+      break;
+    case SEEK_END:
+      bd->ptr = (bd->buf + bd->size) + offset;
+      return bd->ptr;
+      break;
+    case AVSEEK_SIZE:
+      return bd->size;
+      break;
+    default:
+      return -1;
+  }
+  return 1;
 }
 
 int remux(char *path) {
-  AVFormatContext *ifmt_ctx = NULL, *ofmt_ctx = NULL;
+  AVFormatContext *ifmt_ctx = avformat_alloc_context();
+  AVFormatContext *ofmt_ctx = avformat_alloc_context();
+
   AVPacket pkt;
   int ret, i;
   int stream_index = 0;
@@ -51,6 +94,25 @@ int remux(char *path) {
     goto end;
   }
 
+  av_dump_format(ifmt_ctx, 0, path, 0);
+
+  bd.ptr = bd.buf = av_malloc(bd_buf_size);
+
+  if (!bd.buf) {
+    ret = AVERROR(ENOMEM);
+    goto end;
+  }
+
+  bd.size = bd.room = bd_buf_size;
+
+  AVIOContext *avio_ctx = avio_alloc_context(io_buffer, io_buffer_size, 1, &bd,
+                                             NULL, write_packet, seek);
+
+  if (avio_ctx == NULL) {
+    fprintf(stderr, "Could not create avio_out");
+    goto end;
+  }
+
   AVOutputFormat *ofmt = av_guess_format("mp4", NULL, NULL);
 
   avformat_alloc_output_context2(&ofmt_ctx, ofmt, NULL, NULL);
@@ -61,16 +123,8 @@ int remux(char *path) {
     goto end;
   }
 
-  AVIOContext *avio =
-      avio_alloc_context(io_buffer, io_buffer_size, 1, NULL, NULL, NULL, NULL);
-
-  if (avio == NULL) {
-    fprintf(stderr, "Could not create avio_out");
-    goto end;
-  }
-
-  ofmt_ctx->pb = avio;
-  ofmt_ctx->flags = AVFMT_FLAG_CUSTOM_IO;
+  ofmt_ctx->pb = avio_ctx;
+  // ofmt_ctx->flags = AVFMT_FLAG_CUSTOM_IO;
 
   stream_mapping_size = ifmt_ctx->nb_streams;
   stream_mapping =
@@ -120,7 +174,9 @@ int remux(char *path) {
     AVStream *in_stream, *out_stream;
 
     ret = av_read_frame(ifmt_ctx, &pkt);
-    if (ret < 0) break;
+    if (ret < 0) {
+      break;
+    }
 
     in_stream = ifmt_ctx->streams[pkt.stream_index];
     if (pkt.stream_index >= stream_mapping_size ||
@@ -173,5 +229,5 @@ end:
     return 1;
   }
 
-  return 0;
+  return 100;
 }
