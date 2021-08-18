@@ -2,10 +2,10 @@
 #include <libavutil/timestamp.h>
 
 struct buffer_data {
-  uint8_t *buf;
   int size;
-  uint8_t *ptr;
   size_t room;  ///< size left in the buffer
+  uint8_t *buf;
+  uint8_t *ptr;
 };
 
 struct buffer_data bd = {0};
@@ -13,22 +13,21 @@ const size_t bd_buf_size = 1024;
 
 int main(int argc, char const *argv[]) {
   av_register_all();
-  av_log_set_level(AV_LOG_DEBUG);
+  // av_log_set_level(AV_LOG_DEBUG);
   return 0;
 }
 
 static void log_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt,
                        const char *tag) {
-  AVRational *time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
+  // AVRational *time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
 
-  printf(
-      stdout,
-      "%s: pts:%s pts_time:%s dts:%s dts_time:%s duration:%s duration_time:%s "
-      "stream_index:%d\n",
-      tag, av_ts2str(pkt->pts), av_ts2timestr(pkt->pts, time_base),
-      av_ts2str(pkt->dts), av_ts2timestr(pkt->dts, time_base),
-      av_ts2str(pkt->duration), av_ts2timestr(pkt->duration, time_base),
-      pkt->stream_index);
+  // fprintf(
+  //     stdout,
+  //     "%s: pts:%s pts_time:%s dts:%s dts_time:%s duration:%s duration_time:%s
+  //     " "stream_index:%d\n", tag, av_ts2str(pkt->pts),
+  //     av_ts2timestr(pkt->pts, time_base), av_ts2str(pkt->dts),
+  //     av_ts2timestr(pkt->dts, time_base), av_ts2str(pkt->duration),
+  //     av_ts2timestr(pkt->duration, time_base), pkt->stream_index);
 }
 
 static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
@@ -94,7 +93,7 @@ int remux(char *path) {
     goto end;
   }
 
-  av_dump_format(ifmt_ctx, 0, path, 0);
+  // av_dump_format(ifmt_ctx, 0, path, 0);
 
   bd.ptr = bd.buf = av_malloc(bd_buf_size);
 
@@ -229,5 +228,12 @@ end:
     return 1;
   }
 
-  return 100;
+  int bufLength = sizeof(*bd.buf) / sizeof(uint8_t);
+
+  fprintf(stdout, "buffer size: %d\n", bd.size);
+  fprintf(stdout, "buffer room: %d\n", bd.room);
+  fprintf(stdout, "buffer buf: %lu\n", sizeof(*bd.buf));
+  fprintf(stdout, "buffer ptr: %lu\n", (sizeof(*bd.ptr) / sizeof(uint8_t)));
+
+  return &bd;
 }

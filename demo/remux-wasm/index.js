@@ -1,7 +1,8 @@
-let inputFile = document.querySelector('#js_input_file')
+const inputFile = document.querySelector('#js_input_file');
+const videoEle = document.querySelector('#js_video');
 
-worker = new Worker('/demo/remux-wasm/worker.js')
 
+worker = new Worker('/demo/remux-wasm/worker.js');
 
 inputFile.addEventListener('change', () => {
     const file = inputFile.files[0];
@@ -19,10 +20,17 @@ inputFile.addEventListener('change', () => {
         type: 'remux',
         data: {
             file,
-        }
-    })
+        },
+    });
+});
 
+worker.addEventListener('message', evt => {
+    console.log(';;;;;');
+    console.log(evt);
 
-
-})
-
+    if (evt.data.type == 'buffer') {
+        let buffer = evt.data.data.buffer;
+        console.log('.......');
+        console.log(buffer);
+    }
+});
