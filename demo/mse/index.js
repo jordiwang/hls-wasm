@@ -21,7 +21,7 @@ input.addEventListener('change', () => {
 // let assetURL = 'frag_bunny.mp4';
 // Need to be specific for Blink regarding codecs
 // ./mp4info frag_bunny.mp4 | grep Codec
-let mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+let mimeCodec = 'video/mp4; codecs="avc1.64000a, mp4a.40.2"';
 
 if ('MediaSource' in window &&
     MediaSource.isTypeSupported(mimeCodec)) {
