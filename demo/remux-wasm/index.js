@@ -14,6 +14,14 @@ mediaSource.addEventListener('sourceopen', (evt) => {
     let mime = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
 
     sourceBuffer = mediaSource.addSourceBuffer(mime);
+
+
+    sourceBuffer.addEventListener('updateend', function (e) {
+        if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+            mediaSource.endOfStream();
+            video.play()
+        }
+    });
 });
 
 
@@ -22,6 +30,9 @@ mediaSource.addEventListener('sourceended', (evt) => {
     console.log(evt);
     video.play()
 })
+
+
+
 
 inputFile.addEventListener('change', () => {
     const file = inputFile.files[0];

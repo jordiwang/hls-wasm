@@ -2,10 +2,10 @@
 #include <libavutil/timestamp.h>
 
 struct buffer_data {
-  int size;
-  size_t room;  ///< size left in the buffer
-  uint8_t *buf;
-  uint8_t *ptr;
+  int size;   // 内存区总大小
+  size_t room;  //< size left in the buffer 
+  uint8_t *buf; // 起始位置
+  uint8_t *ptr; // 下一个可写的位置
 };
 
 struct buffer_data bd = {0};
