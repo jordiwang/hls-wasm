@@ -17,8 +17,7 @@ int main(int argc, char const *argv[]) {
   return 0;
 }
 
-static void log_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt,
-                       const char *tag) {
+static void log_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt, const char *tag) {
   // AVRational *time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
 
   // fprintf(
@@ -104,8 +103,7 @@ int remux(char *path) {
 
   bd.size = bd.room = bd_buf_size;
 
-  AVIOContext *avio_ctx = avio_alloc_context(io_buffer, io_buffer_size, 1, &bd,
-                                             NULL, write_packet, seek);
+  AVIOContext *avio_ctx = avio_alloc_context(io_buffer, io_buffer_size, 1, &bd, NULL, write_packet, seek);
 
   if (avio_ctx == NULL) {
     fprintf(stderr, "Could not create avio_out");
@@ -126,8 +124,7 @@ int remux(char *path) {
   // ofmt_ctx->flags = AVFMT_FLAG_CUSTOM_IO;
 
   stream_mapping_size = ifmt_ctx->nb_streams;
-  stream_mapping =
-      av_mallocz_array(stream_mapping_size, sizeof(*stream_mapping));
+  stream_mapping = av_mallocz_array(stream_mapping_size, sizeof(*stream_mapping));
   if (!stream_mapping) {
     ret = AVERROR(ENOMEM);
     goto end;
@@ -138,8 +135,7 @@ int remux(char *path) {
     AVStream *in_stream = ifmt_ctx->streams[i];
     AVCodecParameters *in_codecpar = in_stream->codecpar;
 
-    if (in_codecpar->codec_type != AVMEDIA_TYPE_AUDIO &&
-        in_codecpar->codec_type != AVMEDIA_TYPE_VIDEO &&
+    if (in_codecpar->codec_type != AVMEDIA_TYPE_AUDIO && in_codecpar->codec_type != AVMEDIA_TYPE_VIDEO &&
         in_codecpar->codec_type != AVMEDIA_TYPE_SUBTITLE) {
       stream_mapping[i] = -1;
       continue;
@@ -163,10 +159,9 @@ int remux(char *path) {
   }
 
   AVDictionary *opts = NULL;
-  av_dict_set(&opts, "movflags", "frag_keyframe+empty_moov+default_base_moof",
-              0);
+  av_dict_set(&opts, "movflags", "frag_keyframe+empty_moov+default_base_moof", 0);
 
-  ret = avformat_write_header(ofmt_ctx, &opts);
+  ret = avformat_write_header(ofmt_ctx, NULL);
 
   if (ret < 0) {
     fprintf(stderr, "Error occurred when write header\n");
@@ -182,8 +177,7 @@ int remux(char *path) {
     }
 
     in_stream = ifmt_ctx->streams[pkt.stream_index];
-    if (pkt.stream_index >= stream_mapping_size ||
-        stream_mapping[pkt.stream_index] < 0) {
+    if (pkt.stream_index >= stream_mapping_size || stream_mapping[pkt.stream_index] < 0) {
       av_packet_unref(&pkt);
       continue;
     }
@@ -193,14 +187,9 @@ int remux(char *path) {
     log_packet(ifmt_ctx, &pkt, "in");
 
     /* copy packet */
-    pkt.pts =
-        av_rescale_q_rnd(pkt.pts, in_stream->time_base, out_stream->time_base,
-                         AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX);
-    pkt.dts =
-        av_rescale_q_rnd(pkt.dts, in_stream->time_base, out_stream->time_base,
-                         AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX);
-    pkt.duration =
-        av_rescale_q(pkt.duration, in_stream->time_base, out_stream->time_base);
+    pkt.pts = av_rescale_q_rnd(pkt.pts, in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX);
+    pkt.dts = av_rescale_q_rnd(pkt.dts, in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX);
+    pkt.duration = av_rescale_q(pkt.duration, in_stream->time_base, out_stream->time_base);
     pkt.pos = -1;
     log_packet(ofmt_ctx, &pkt, "out");
 

@@ -46,19 +46,19 @@ inputFile.addEventListener('change', () => {
 
     // fileReader.readAsArrayBuffer(file)
 
-    // worker.postMessage({
-    //     type: 'remux',
-    //     data: {
-    //         file,
-    //     },
-    // });
+    worker.postMessage({
+        type: 'remux',
+        data: {
+            file,
+        },
+    });
 
-    const fileReader = new FileReader()
-    fileReader.addEventListener('load', () => {
-        sourceBuffer.appendBuffer(fileReader.result)
+    // const fileReader = new FileReader()
+    // fileReader.addEventListener('load', () => {
+    //     sourceBuffer.appendBuffer(fileReader.result)
 
-    })
-    fileReader.readAsArrayBuffer(file)
+    // })
+    // fileReader.readAsArrayBuffer(file)
 });
 
 

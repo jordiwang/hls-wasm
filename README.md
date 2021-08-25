@@ -11,7 +11,7 @@ https://juejin.cn/post/6844903566394523656
 https://stackoverflow.com/questions/22996665/unable-to-get-mediasource-working-with-mp4-format-in-chrome
 https://stackoverflow.com/questions/42430809/different-between-fragmented-mp4-files-generated-by-ffmpeg-and-by-code
 https://stackoverflow.com/questions/34429220/how-to-generate-fragmented-mp4-files-programmatically
-
+https://stackoverflow.com/questions/33147402/ffmpeg-malformed-aac-bitstream-detected-use-the-audio-bitstream-filter-aac-ad
 ### ffmpeg 
 
 ffmpeg -i demo.ts -movflags frag_keyframe+empty_moov+default_base_moof demo.mp4
