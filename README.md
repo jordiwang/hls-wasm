@@ -7,3 +7,9 @@ https://www.jianshu.com/p/1bfe4470349b
 https://juejin.cn/post/6953777965838630926
 https://cconcolato.github.io/media-mime-support/
 https://juejin.cn/post/6844903566394523656
+https://stackoverflow.com/questions/22996665/unable-to-get-mediasource-working-with-mp4-format-in-chrome
+
+
+### ffmpeg 
+
+ffmpeg -i demo.ts -movflags frag_keyframe+empty_moov+default_base_moof demo.mp4
