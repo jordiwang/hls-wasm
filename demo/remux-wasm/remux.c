@@ -2,10 +2,10 @@
 #include <libavutil/timestamp.h>
 
 struct buffer_data {
-  int size;   // 内存区总大小
-  size_t room;  //< size left in the buffer 
-  uint8_t *buf; // 起始位置
-  uint8_t *ptr; // 下一个可写的位置
+  int size;      // 内存区总大小
+  size_t room;   // 内存区剩余大小
+  uint8_t *buf;  // 起始位置
+  uint8_t *ptr;  // 下一个可写的位置
 };
 
 struct buffer_data bd = {0};
@@ -162,7 +162,11 @@ int remux(char *path) {
     out_stream->codecpar->codec_tag = 0;
   }
 
-  ret = avformat_write_header(ofmt_ctx, NULL);
+  AVDictionary *opts = NULL;
+  av_dict_set(&opts, "movflags", "frag_keyframe+empty_moov+default_base_moof",
+              0);
+
+  ret = avformat_write_header(ofmt_ctx, &opts);
 
   if (ret < 0) {
     fprintf(stderr, "Error occurred when write header\n");
