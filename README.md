@@ -12,6 +12,10 @@ https://stackoverflow.com/questions/22996665/unable-to-get-mediasource-working-w
 https://stackoverflow.com/questions/42430809/different-between-fragmented-mp4-files-generated-by-ffmpeg-and-by-code
 https://stackoverflow.com/questions/34429220/how-to-generate-fragmented-mp4-files-programmatically
 https://stackoverflow.com/questions/33147402/ffmpeg-malformed-aac-bitstream-detected-use-the-audio-bitstream-filter-aac-ad
+https://github.com/FFmpeg/FFmpeg/blob/master/doc/examples/remuxing.c
+http://ffmpeg.org/doxygen/trunk/transcoding_8c-example.html
+https://www.jianshu.com/p/1bff2869b47d
+
 ### ffmpeg 
 
 ffmpeg -i demo.ts -movflags frag_keyframe+empty_moov+default_base_moof demo.mp4

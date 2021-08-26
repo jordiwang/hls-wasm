@@ -15,7 +15,7 @@ input.addEventListener('change', () => {
     fileReader.readAsArrayBuffer(file);
 });
 
-let mimeCodec = 'video/mp4; codecs="avc1.4D401F, mp4a.40.2"';
+let mimeCodec = 'video/mp4; codecs="avc1.64001f"';
 
 if ('MediaSource' in window && MediaSource.isTypeSupported(mimeCodec)) {
     let mediaSource = new MediaSource();
