@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ffmpeg-wasm</title>
+</head>
+
+<body>
+
+    <div>
+        <input class="js_input" type="file">
+    </div>
+
+    <video class="js_video" controls></video>
+
+    <script src="/demo/ffmpeg-wasm/node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js"></script>
+    <script>
+        const { createFFmpeg } = FFmpeg;
+        const ffmpeg = createFFmpeg({
+            corePath: "/demo/ffmpeg-wasm/node_modules/@ffmpeg/core/dist/ffmpeg-core.js",
+            log: true,
+        });
+
+        ffmpeg.load()
+
+
+        const inputFile = document.querySelector('.js_input')
+        inputFile.addEventListener('change', evt => {
+            const file = inputFile.files[0]
+
+            const fileReader = new FileReader()
+            fileReader.addEventListener('load', async () => {
+                const arrayBuffer = fileReader.result
+                const unit8Array = new Uint8Array(arrayBuffer)
+
+                ffmpeg.FS('writeFile', 'demo.ts', unit8Array);
+                await ffmpeg.run('-i', 'demo.ts', '-movflags', 'frag_keyframe+empty_moov+default_base_moof', 'demo.mp4');
+
+
+                const data = ffmpeg.FS('readFile', 'demo.mp4');
+                const video = document.querySelector('.js_video');
+                video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+
+            })
+            fileReader.readAsArrayBuffer(file)
+        })
+
+    </script>
+</body>
+
+</html>

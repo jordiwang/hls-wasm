@@ -9,6 +9,12 @@ input.addEventListener('change', () => {
     let file = input.files[0];
 
     fileReader.addEventListener('load', () => {
+
+        console.log('=========');
+        console.log(fileReader.result.length);
+        console.log(fileReader.result);
+        console.log(new Uint8Array(fileReader.result));
+
         sourceBuffer.appendBuffer(fileReader.result);
     });
 

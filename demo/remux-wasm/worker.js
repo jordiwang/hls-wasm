@@ -20,13 +20,19 @@ function remux(file) {
 
     let result = ffmpegRemux(`${MOUNT_DIR}/${file.name}`);
 
-    console.log(result);
 
     let size = Module.HEAPU32[result / 4];
     let room = Module.HEAPU32[result / 4 + 1];
     let bufPtr = Module.HEAPU32[result / 4 + 2];
 
-    let buffer = Module.HEAPU8.slice(bufPtr, bufPtr + size);
+
+
+    let buffer = Module.HEAPU8.slice(bufPtr, bufPtr + size - room);
+
+
+
+    console.log('aaaaaaaaa');
+    console.log(size, room, bufPtr);
 
     let evt = {
         type: 'buffer',

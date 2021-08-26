@@ -1,0 +1,15 @@
+{
+  "name": "ffmpeg-wasm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ffmpeg/core": "0.8.4",
+    "@ffmpeg/ffmpeg": "^0.10.1"
+  }
+}

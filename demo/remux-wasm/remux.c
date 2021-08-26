@@ -135,8 +135,10 @@ int remux(char *path) {
     AVStream *in_stream = ifmt_ctx->streams[i];
     AVCodecParameters *in_codecpar = in_stream->codecpar;
 
-    if (in_codecpar->codec_type != AVMEDIA_TYPE_AUDIO && in_codecpar->codec_type != AVMEDIA_TYPE_VIDEO &&
-        in_codecpar->codec_type != AVMEDIA_TYPE_SUBTITLE) {
+    if (in_codecpar->codec_type != AVMEDIA_TYPE_VIDEO
+    // && in_codecpar->codec_type != AVMEDIA_TYPE_AUDIO 
+    // && in_codecpar->codec_type != AVMEDIA_TYPE_SUBTITLE
+    ) {
       stream_mapping[i] = -1;
       continue;
     }

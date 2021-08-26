@@ -11,7 +11,7 @@ video.src = URL.createObjectURL(mediaSource)
 
 
 mediaSource.addEventListener('sourceopen', (evt) => {
-    let mime = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+    let mime = 'video/mp4; codecs="avc1.64001f"'
 
     sourceBuffer = mediaSource.addSourceBuffer(mime);
 
@@ -72,6 +72,6 @@ worker.addEventListener('message', evt => {
         console.log('.......');
         console.log(buffer);
 
-        sourceBuffer.appendBuffer(buffer)
+        sourceBuffer.appendBuffer(buffer.buffer)
     }
 });

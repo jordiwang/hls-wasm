@@ -15,6 +15,7 @@ https://stackoverflow.com/questions/33147402/ffmpeg-malformed-aac-bitstream-dete
 https://github.com/FFmpeg/FFmpeg/blob/master/doc/examples/remuxing.c
 http://ffmpeg.org/doxygen/trunk/transcoding_8c-example.html
 https://www.jianshu.com/p/1bff2869b47d
+https://github.com/ffmpegwasm/ffmpeg.wasm
 
 ### ffmpeg 
 
