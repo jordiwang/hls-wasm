@@ -27,7 +27,7 @@ function remux(file) {
 
 
 
-    let buffer = Module.HEAPU8.slice(bufPtr, bufPtr + size - room);
+    let buffer = Module.HEAPU.slice(bufPtr, bufPtr + size - room);
 
 
 
