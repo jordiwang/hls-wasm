@@ -16,6 +16,7 @@ https://github.com/FFmpeg/FFmpeg/blob/master/doc/examples/remuxing.c
 http://ffmpeg.org/doxygen/trunk/transcoding_8c-example.html
 https://www.jianshu.com/p/1bff2869b47d
 https://github.com/ffmpegwasm/ffmpeg.wasm
+https://juejin.cn/post/6998876488451751973/
 
 ### ffmpeg 
 

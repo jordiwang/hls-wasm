@@ -21,7 +21,7 @@
         const { createFFmpeg, fetchFile } = FFmpeg;
         const ffmpeg = createFFmpeg({
             corePath: "/demo/ffmpeg-wasm/dist/ffmpeg-core.js",
-            log: false,
+            log: true,
         });
 
         ffmpeg.load()
@@ -48,6 +48,7 @@
 
 
                 const data = ffmpeg.FS('readFile', 'demo.mp4');
+                console.log(data);
                 const video = document.querySelector('.js_video');
                 video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 video.play()
