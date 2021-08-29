@@ -21,7 +21,7 @@
         const { createFFmpeg, fetchFile } = FFmpeg;
         const ffmpeg = createFFmpeg({
             corePath: "/demo/ffmpeg-wasm/dist/ffmpeg-core.js",
-            log: true,
+            log: false,
         });
 
         ffmpeg.load()
@@ -31,27 +31,29 @@
         inputFile.addEventListener('change', async evt => {
             const file = inputFile.files[0]
 
-            ffmpeg.FS('writeFile', file.name, await fetchFile(file));
-            await ffmpeg.run('-i', file.name, '-movflags', 'frag_keyframe+empty_moov+default_base_moof', '-c:v', 'copy', 'demo.mp4');
-            const data = ffmpeg.FS('readFile', 'demo.mp4');
-            const video = document.querySelector('.js_video');
-            video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            // ffmpeg.FS('writeFile', file.name, await fetchFile(file));
+            // await ffmpeg.run('-i', file.name, '-movflags', 'frag_keyframe+empty_moov+default_base_moof', '-c:v', 'copy', 'demo.mp4');
+            // const data = ffmpeg.FS('readFile', 'demo.mp4');
+            // const video = document.querySelector('.js_video');
+            // video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            // video.play()
 
-            // const fileReader = new FileReader()
-            // fileReader.addEventListener('load', async () => {
-            //     const arrayBuffer = fileReader.result
-            //     const unit8Array = new Uint8Array(arrayBuffer)
+            const fileReader = new FileReader()
+            fileReader.addEventListener('load', async () => {
+                const arrayBuffer = fileReader.result
+                const unit8Array = new Uint8Array(arrayBuffer)
 
-            //     ffmpeg.FS('writeFile', 'demo.ts', unit8Array);
-            //     await ffmpeg.run('-i', 'demo.ts', 'demo.mp4');
+                ffmpeg.FS('writeFile', file.name, unit8Array);
+                await ffmpeg.run('-i', file.name, '-movflags', 'frag_keyframe+empty_moov+default_base_moof', '-c:v', 'copy', 'demo.mp4');
 
 
-            //     const data = ffmpeg.FS('readFile', 'demo.mp4');
-            //     const video = document.querySelector('.js_video');
-            //     video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                const data = ffmpeg.FS('readFile', 'demo.mp4');
+                const video = document.querySelector('.js_video');
+                video.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                video.play()
 
-            // })
-            // fileReader.readAsArrayBuffer(file)
+            })
+            fileReader.readAsArrayBuffer(file)
         })
 
     </script>
