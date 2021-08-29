@@ -92,7 +92,7 @@ int remux(char *path) {
     goto end;
   }
 
-  // av_dump_format(ifmt_ctx, 0, path, 0);
+  av_dump_format(ifmt_ctx, 0, path, 0);
 
   bd.ptr = bd.buf = av_malloc(bd_buf_size);
 
